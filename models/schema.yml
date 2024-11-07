@@ -1,0 +1,157 @@
+version: 2
+
+models:
+  - name: customers
+    description: "Table containing customer details such as name, email, and account creation date."
+    columns:
+      - name: customer_id
+        description: "Primary key. Unique identifier for each customer."
+        tests:
+          - not_null
+          - unique
+      - name: email
+        description: "Email address of the customer."
+        tests:
+          - not_null
+      - name: created_at
+        description: "Timestamp when the customer was created."
+        tests:
+          - not_null
+
+  - name: inventory_transactions
+    description: "Table logging inventory transactions, including quantity changes and reasons."
+    columns:
+      - name: transaction_id
+        description: "Primary key. Unique identifier for each transaction."
+        tests:
+          - not_null
+          - unique
+      - name: product_id
+        description: "Foreign key to products table. Identifier for the product involved in the transaction."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('products')
+              field: product_id
+      - name: transaction_date
+        description: "Date and time of the transaction."
+        tests:
+          - not_null
+
+  - name: inventory
+    description: "Table showing current inventory quantities and last updated timestamps for each product."
+    columns:
+      - name: product_id
+        description: "Primary key. Unique identifier for each product."
+        tests:
+          - not_null
+          - unique
+          - relationships:
+              to: ref('products')
+              field: product_id
+      - name: quantity
+        description: "Current quantity in stock."
+        tests:
+          - not_null
+
+  - name: order_details
+    description: "Table with details of individual items within orders, including quantity and line totals."
+    columns:
+      - name: order_id
+        description: "Foreign key to orders table. Identifier for the order."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('orders')
+              field: order_id
+      - name: product_id
+        description: "Foreign key to products table. Identifier for the product."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('products')
+              field: product_id
+      - name: quantity
+        description: "Quantity of the product in this order."
+        tests:
+          - not_null
+      - name: unit_price
+        description: "Price per unit of the product."
+        tests:
+          - not_null
+      - name: line_total
+        description: "Total price for this line (quantity * unit_price)."
+        tests:
+          - not_null
+
+  - name: orders
+    description: "Table containing customer orders, including order date and total amount."
+    columns:
+      - name: order_id
+        description: "Primary key. Unique identifier for each order."
+        tests:
+          - not_null
+          - unique
+      - name: customer_id
+        description: "Foreign key to customers table. Identifier for the customer who placed the order."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('customers')
+              field: customer_id
+      - name: order_date
+        description: "Date and time when the order was placed."
+        tests:
+          - not_null
+      - name: total_amount
+        description: "Total amount for the order."
+        tests:
+          - not_null
+
+  - name: products
+    description: "Table listing products with information on category, price, and creation date."
+    columns:
+      - name: product_id
+        description: "Primary key. Unique identifier for each product."
+        tests:
+          - not_null
+          - unique
+      - name: product_name
+        description: "Name of the product."
+        tests:
+          - not_null
+      - name: price
+        description: "Price of the product."
+        tests:
+          - not_null
+
+  - name: supplier_products
+    description: "Associative table linking products to their suppliers."
+    columns:
+      - name: supplier_id
+        description: "Foreign key to suppliers table. Identifier for the supplier."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('suppliers')
+              field: supplier_id
+      - name: product_id
+        description: "Foreign key to products table. Identifier for the product supplied."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('products')
+              field: product_id
+
+  - name: suppliers
+    description: "Table containing supplier details, including contact information."
+    columns:
+      - name: supplier_id
+        description: "Primary key. Unique identifier for each supplier."
+        tests:
+          - not_null
+          - unique
+      - name: contact_email
+        description: "Email address of the supplier contact."
+        tests:
+          - not_null

@@ -1,0 +1,11 @@
+
+    
+    
+    truncate table "jaffle_shop"."main"."raw_inventory_transactions";
+    -- dbt seed --
+    
+          COPY "jaffle_shop"."main"."raw_inventory_transactions" FROM '/Users/bunjee/Desktop/assignment4_db/seeds/raw_inventory_transactions.csv' (FORMAT CSV, HEADER TRUE, DELIMITER ',')
+        
+
+;
+  
